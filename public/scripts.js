@@ -49,11 +49,55 @@ const individualCartCalculator = () => {
     }
 }
 
-const populateCarts = () => {
+const populateCarts = (numCarts) => {
     const target = document.getElementById('calculator');
-    const testElement = document.createElement('h1');
-    testElement.innerText = "We did it";
-    target.appendChild(testElement);
+    for (let i = 0; i < numCarts; i++) {
+        target.appendChild(createCartElement(i));
+    }
+}
+
+const createCartElement = (cartId) => {
+    const cartElement = document.createElement('div');
+    cartElement.setAttribute("class", "input-group mb-3 cartElement");
+
+    const cartInput = document.createElement('input');
+    cartInput.setAttribute('class', 'form-control');
+    cartInput.setAttribute("id", `cartInput${cartId}`);
+    cartInput.setAttribute("type", "number");
+    cartInput.setAttribute("placeholder", "Total Eaches of Cart");
+    cartInput.setAttribute("min", "0");
+    cartInput.setAttribute("max", "200");
+
+    const cartSelect = document.createElement('select');
+    cartSelect.setAttribute('class', 'form-select');
+    cartSelect.setAttribute('id', `cartTypeSelector${cartId}`);
+
+    const genericOption = document.createElement('option');
+    genericOption.setAttribute("value", '');
+    genericOption.innerText = 'Select a batch type...';
+    genericOption.selected = true;
+
+    const pickupOption = document.createElement('option');
+    pickupOption.setAttribute("value", 'opu');
+    pickupOption.innerText = 'GM/Pickup';
+
+    const bulkyOption = document.createElement('option');
+    bulkyOption.setAttribute("value", 'bulky');
+    bulkyOption.innerText = 'Bulky';
+
+    const groceryOption = document.createElement('option');
+    groceryOption.setAttribute("value", 'gro');
+    groceryOption.innerText = 'Grocery';
+
+    cartSelect.appendChild(genericOption);
+    cartSelect.appendChild(pickupOption);
+    cartSelect.appendChild(bulkyOption);
+    cartSelect.appendChild(groceryOption);
+
+    cartElement.appendChild(cartInput);
+    cartElement.appendChild(cartSelect);
+
+    return cartElement;
 }
 
 const enterNumDueToday = () => {
