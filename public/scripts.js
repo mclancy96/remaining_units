@@ -11,9 +11,19 @@ const removeElementsByClass = (className) => {
     }
 }
 
+const clearStorage = () => {
+    localStorage.setItem('availablePickupEaches', 0)
+    localStorage.setItem('availableGroceryEaches', 0)
+    localStorage.setItem('activeGroceryEaches', 0)
+    localStorage.setItem('activePickupEaches', 0)
+    localStorage.setItem('dueTodayPickupEaches', 0)
+    localStorage.setItem('dueTodayGroceryEaches', 0)
+}
+
 const getCarts = () => {
     const target = document.getElementById('calculator');
     removeAllChildNodes(target);
+    clearStorage();
 
     const numberInput = document.createElement('input');
     numberInput.setAttribute("id", 'numInput');
@@ -209,7 +219,7 @@ const saveAvailable = () => {
     const groceryEaches = document.getElementById("groEachesAvailableInput").value
     localStorage.setItem('availablePickupEaches', pickupEaches)
     localStorage.setItem('availableGroceryEaches', groceryEaches)
-    // populateTotalAvailable()
+    reportNumbers();
 }
 
 const createCartElement = (cartId) => {
@@ -259,7 +269,78 @@ const createCartElement = (cartId) => {
 const enterNumDueToday = () => {
     const target = document.getElementById('calculator');
     removeAllChildNodes(target);
-    const testElement = document.createElement('h1');
-    testElement.innerText = "This sums it up";
-    target.appendChild(testElement);
+    clearStorage();
+
+    const activeEachesElement = document.createElement('div');
+    activeEachesElement.setAttribute("class", "input-group m-3 activeEachesElement");
+
+    const opuActiveEachesInput = document.createElement('input');
+    opuActiveEachesInput.setAttribute('class', 'form-control');
+    opuActiveEachesInput.setAttribute("id", `opuActiveEachesInput`);
+    opuActiveEachesInput.setAttribute("type", "number");
+    opuActiveEachesInput.setAttribute("placeholder", "Total Eaches of Pickup in Active Carts");
+    opuActiveEachesInput.setAttribute("min", "0");
+    opuActiveEachesInput.setAttribute("max", "200");
+
+    const opuInputLabel = document.createElement('label');
+    opuInputLabel.innerText = "Enter the total number of pickup eaches in Active Carts"
+    opuInputLabel.setAttribute('for', 'opuActiveEachesInput');
+    opuInputLabel.setAttribute('class', 'form-label text-start');
+
+    const groActiveEachesInput = document.createElement('input');
+    groActiveEachesInput.setAttribute('class', 'form-control');
+    groActiveEachesInput.setAttribute("id", `groActiveEachesInput`);
+    groActiveEachesInput.setAttribute("type", "number");
+    groActiveEachesInput.setAttribute("placeholder", "Total Eaches of Grocery in Active Carts");
+    groActiveEachesInput.setAttribute("min", "0");
+    groActiveEachesInput.setAttribute("max", "200");
+
+    const groInputLabel = document.createElement('label');
+    groInputLabel.innerText = "Enter the total number of grocery eaches in Active Carts"
+    groInputLabel.setAttribute('for', 'groActiveEachesInput');
+    groInputLabel.setAttribute('class', 'form-label text-start');
+
+    const activeEachesExplanation = document.createElement('p');
+    activeEachesExplanation.setAttribute('class', 'text-start');
+
+    const enterActiveEachesButton = document.createElement('button');
+    enterActiveEachesButton.setAttribute("onclick", "saveActiveSums()")
+    enterActiveEachesButton.setAttribute("class", "btn btn-primary");
+    enterActiveEachesButton.innerText = "Enter Active Eaches";
+
+    activeEachesElement.appendChild(activeEachesExplanation);
+    activeEachesElement.appendChild(opuInputLabel);
+    activeEachesElement.appendChild(opuActiveEachesInput);
+    activeEachesElement.appendChild(groInputLabel);
+    activeEachesElement.appendChild(groActiveEachesInput);
+
+    target.appendChild(activeEachesElement);
+    target.appendChild(enterActiveEachesButton);
+}
+
+const saveActiveSums = () => {
+    storeBatchEaches(document.getElementById("opuActiveEachesInput").value, document.getElementById("groActiveEachesInput").value)
+    populateRemainingDueToday()
+}
+
+const reportNumbers = () => {
+    const target = document.getElementById('calculator');
+    removeAllChildNodes(target);
+    const activeGroceryEaches = localStorage.getItem("activeGroceryEaches")
+    const activePickupEaches = localStorage.getItem("activePickupEaches")
+    const dueTodayGroceryEaches = localStorage.getItem("dueTodayGroceryEaches")
+    const dueTodayPickupEaches = localStorage.getItem("dueTodayPickupEaches")
+    const availableGroceryEaches = localStorage.getItem("availableGroceryEaches")
+    const availablePickupEaches = localStorage.getItem("availablePickupEaches")
+
+    let remainingTodayGrocery = dueTodayGroceryEaches - activeGroceryEaches
+    let remainingGrocery = availableGroceryEaches - activeGroceryEaches
+    let remainingTodayPickup = dueTodayPickupEaches - activePickupEaches
+    let remainingPickups = availablePickupEaches - activePickupEaches
+
+    const report = document.createElement('p');
+    report.innerText = `OPU Eaches Report:\nPickup Eaches due Today: ${remainingTodayPickup}\n
+    Grocery Eaches due Today: ${remainingTodayGrocery}\n\nTotal Remaining Pickup Eaches: ${remainingPickups}
+    \nTotal Remaining Grocery Eaches: ${remainingGrocery}`
+    target.appendChild(report)
 }
