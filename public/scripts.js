@@ -14,6 +14,7 @@ const getCarts = () => {
     numberInput.setAttribute("min", '0');
     numberInput.setAttribute("max", '20');
     numberInput.setAttribute("class", 'form-control m-2');
+    numberInput.required = true;
 
     const createCartsButton = document.createElement('button');
     createCartsButton.setAttribute("onclick", "individualCartCalculator()")
@@ -32,13 +33,32 @@ const getCarts = () => {
 
 const individualCartCalculator = () => {
     const target = document.getElementById('calculator');
+    const oldError = document.getElementById('errorMessage');
+    if (oldError) {
+        oldError.remove();
+    }
+    const numInput = document.getElementById('numInput');
+    if (numInput.value != "" && !isNaN(numInput.value) && (0 <= parseInt(numInput.value) && parseInt(numInput.value) <= 20)) {
+        populateCarts(numInput.value);
+    } else {
+        const errorMessage = document.createElement('h1');
+        errorMessage.innerText = `Please enter a number from 0 to 20`;
+        errorMessage.setAttribute("class", "text-danger")
+        errorMessage.setAttribute("id", "errorMessage")
+        target.appendChild(errorMessage);
+    }
+}
+
+const populateCarts = () => {
+    const target = document.getElementById('calculator');
     const testElement = document.createElement('h1');
-    testElement.innerText = "Yo yo. this worked";
+    testElement.innerText = "We did it";
     target.appendChild(testElement);
 }
 
 const enterNumDueToday = () => {
     const target = document.getElementById('calculator');
+    removeAllChildNodes(target);
     const testElement = document.createElement('h1');
     testElement.innerText = "This sums it up";
     target.appendChild(testElement);
