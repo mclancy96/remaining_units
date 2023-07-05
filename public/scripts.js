@@ -4,6 +4,13 @@ const removeAllChildNodes = (parent) => {
     }
 }
 
+const removeElementsByClass = (className) => {
+    const elements = document.getElementsByClassName(className);
+    while (elements.length > 0) {
+        elements[0].parentNode.removeChild(elements[0]);
+    }
+}
+
 const getCarts = () => {
     const target = document.getElementById('calculator');
     removeAllChildNodes(target);
@@ -51,14 +58,96 @@ const individualCartCalculator = () => {
 
 const populateCarts = (numCarts) => {
     const target = document.getElementById('calculator');
+    removeElementsByClass('cartElement');
+    removeElementsByClass('cartElementBtn');
     for (let i = 0; i < numCarts; i++) {
         target.appendChild(createCartElement(i));
     }
+
+    const enterCartsButton = document.createElement('button');
+    enterCartsButton.setAttribute("onclick", "calculateCurrentTotalsByBatches()")
+    enterCartsButton.setAttribute("class", "btn btn-primary cartElementBtn");
+    enterCartsButton.innerText = "Enter carts";
+    target.appendChild(enterCartsButton);
+}
+
+const calculateCurrentTotalsByBatches = () => {
+    const batches = document.getElementsByClassName("cartElement");
+    let groceryEaches = 0;
+    let pickupEaches = 0;
+    for (let i = 0; i < batches.length; i++) {
+        const batchEaches = parseInt(batches[i].firstChild.value);
+        const selectField = batches[i].lastChild;
+        const batchType = selectField.options[selectField.selectedIndex].value;
+        if (batchType == "bulky" || batchType == "opu") {
+            pickupEaches += batchEaches;
+        } else if (batchType == "gro") {
+            groceryEaches += batchEaches;
+        }
+    }
+    storeBatchEaches(pickupEaches, groceryEaches);
+    populateRemainingDueToday()
+}
+
+const storeBatchEaches = (pickupEaches, groceryEaches) => {
+    localStorage.setItem('activePickupEaches', pickupEaches)
+    localStorage.setItem('activeGroceryEaches', groceryEaches)
+}
+
+const populateRemainingDueToday = () => {
+    const target = document.getElementById('calculator');
+
+    const dueTodayElement = document.createElement('div');
+    dueTodayElement.setAttribute("class", "input-group m-3 dueTodayElement");
+
+    const opuEachesDueTodayInput = document.createElement('input');
+    opuEachesDueTodayInput.setAttribute('class', 'form-control');
+    opuEachesDueTodayInput.setAttribute("id", `opuEachesDueTodayInput`);
+    opuEachesDueTodayInput.setAttribute("type", "number");
+    opuEachesDueTodayInput.setAttribute("placeholder", "Total Eaches of Pickup Due Today");
+    opuEachesDueTodayInput.setAttribute("min", "0");
+    opuEachesDueTodayInput.setAttribute("max", "200");
+
+    const opuInputLabel = document.createElement('label');
+    opuInputLabel.innerText = "Enter the total number of pickup eaches due today"
+    opuInputLabel.setAttribute('for', 'opuEachesDueTodayInput');
+    opuInputLabel.setAttribute('class', 'form-label text-start');
+
+    const groEachesDueTodayInput = document.createElement('input');
+    groEachesDueTodayInput.setAttribute('class', 'form-control');
+    groEachesDueTodayInput.setAttribute("id", `groEachesDueTodayInput`);
+    groEachesDueTodayInput.setAttribute("type", "number");
+    groEachesDueTodayInput.setAttribute("placeholder", "Total Eaches of Grocery Due Today");
+    groEachesDueTodayInput.setAttribute("min", "0");
+    groEachesDueTodayInput.setAttribute("max", "200");
+
+    const groInputLabel = document.createElement('label');
+    groInputLabel.innerText = "Enter the total number of grocery eaches due today"
+    groInputLabel.setAttribute('for', 'opuEachesDueTodayInput');
+    groInputLabel.setAttribute('class', 'form-label text-start');
+
+    const dueTodayExplanation = document.createElement('p');
+    dueTodayExplanation.setAttribute('class', 'text-start');
+
+    const enterDueTodayButton = document.createElement('button');
+    enterDueTodayButton.setAttribute("onclick", "calculateCurrentTotalsByBatches()")
+    enterDueTodayButton.setAttribute("class", "btn btn-primary");
+    enterDueTodayButton.innerText = "Enter Today's Eaches";
+
+
+    dueTodayElement.appendChild(dueTodayExplanation);
+    dueTodayElement.appendChild(opuInputLabel);
+    dueTodayElement.appendChild(opuEachesDueTodayInput);
+    dueTodayElement.appendChild(groInputLabel);
+    dueTodayElement.appendChild(groEachesDueTodayInput);
+
+    target.appendChild(dueTodayElement);
+    target.appendChild(enterDueTodayButton);
 }
 
 const createCartElement = (cartId) => {
     const cartElement = document.createElement('div');
-    cartElement.setAttribute("class", "input-group mb-3 cartElement");
+    cartElement.setAttribute("class", "input-group m-3 cartElement");
 
     const cartInput = document.createElement('input');
     cartInput.setAttribute('class', 'form-control');
@@ -69,7 +158,7 @@ const createCartElement = (cartId) => {
     cartInput.setAttribute("max", "200");
 
     const cartSelect = document.createElement('select');
-    cartSelect.setAttribute('class', 'form-select');
+    cartSelect.setAttribute('class', 'form-select cartSelect');
     cartSelect.setAttribute('id', `cartTypeSelector${cartId}`);
 
     const genericOption = document.createElement('option');
