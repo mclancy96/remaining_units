@@ -123,14 +123,14 @@ const populateRemainingDueToday = () => {
 
     const groInputLabel = document.createElement('label');
     groInputLabel.innerText = "Enter the total number of grocery eaches due today"
-    groInputLabel.setAttribute('for', 'opuEachesDueTodayInput');
+    groInputLabel.setAttribute('for', 'groEachesDueTodayInput');
     groInputLabel.setAttribute('class', 'form-label text-start');
 
     const dueTodayExplanation = document.createElement('p');
     dueTodayExplanation.setAttribute('class', 'text-start');
 
     const enterDueTodayButton = document.createElement('button');
-    enterDueTodayButton.setAttribute("onclick", "calculateCurrentTotalsByBatches()")
+    enterDueTodayButton.setAttribute("onclick", "saveDueToday()")
     enterDueTodayButton.setAttribute("class", "btn btn-primary");
     enterDueTodayButton.innerText = "Enter Today's Eaches";
 
@@ -143,6 +143,73 @@ const populateRemainingDueToday = () => {
 
     target.appendChild(dueTodayElement);
     target.appendChild(enterDueTodayButton);
+}
+
+const saveDueToday = () => {
+    const pickupEaches = document.getElementById("opuEachesDueTodayInput").value
+    const groceryEaches = document.getElementById("groEachesDueTodayInput").value
+    localStorage.setItem('dueTodayPickupEaches', pickupEaches)
+    localStorage.setItem('dueTodayGroceryEaches', groceryEaches)
+    populateTotalAvailable()
+}
+
+const populateTotalAvailable = () => {
+    const target = document.getElementById('calculator');
+
+    const totalAvailableElement = document.createElement('div');
+    totalAvailableElement.setAttribute("class", "input-group m-3 totalAvailableElement");
+
+    const opuEachesAvailableInput = document.createElement('input');
+    opuEachesAvailableInput.setAttribute('class', 'form-control');
+    opuEachesAvailableInput.setAttribute("id", `opuEachesAvailableInput`);
+    opuEachesAvailableInput.setAttribute("type", "number");
+    opuEachesAvailableInput.setAttribute("placeholder", "Total Eaches of Pickup Available");
+    opuEachesAvailableInput.setAttribute("min", "0");
+    opuEachesAvailableInput.setAttribute("max", "200");
+
+    const opuInputLabel = document.createElement('label');
+    opuInputLabel.innerText = "Enter the total number of pickup eaches available"
+    opuInputLabel.setAttribute('for', 'opuEachesAvailableInput');
+    opuInputLabel.setAttribute('class', 'form-label text-start');
+
+    const groEachesAvailableInput = document.createElement('input');
+    groEachesAvailableInput.setAttribute('class', 'form-control');
+    groEachesAvailableInput.setAttribute("id", `groEachesAvailableInput`);
+    groEachesAvailableInput.setAttribute("type", "number");
+    groEachesAvailableInput.setAttribute("placeholder", "Total Eaches of Grocery Available");
+    groEachesAvailableInput.setAttribute("min", "0");
+    groEachesAvailableInput.setAttribute("max", "200");
+
+    const groInputLabel = document.createElement('label');
+    groInputLabel.innerText = "Enter the total number of grocery eaches available"
+    groInputLabel.setAttribute('for', 'groEachesAvailableInput');
+    groInputLabel.setAttribute('class', 'form-label text-start');
+
+    const totalAvailableExplanation = document.createElement('p');
+    totalAvailableExplanation.setAttribute('class', 'text-start');
+
+    const enterAvailableButton = document.createElement('button');
+    enterAvailableButton.setAttribute("onclick", "saveAvailable()")
+    enterAvailableButton.setAttribute("class", "btn btn-primary");
+    enterAvailableButton.innerText = "Enter Total Available Eaches";
+
+
+    totalAvailableElement.appendChild(totalAvailableExplanation);
+    totalAvailableElement.appendChild(opuInputLabel);
+    totalAvailableElement.appendChild(opuEachesAvailableInput);
+    totalAvailableElement.appendChild(groInputLabel);
+    totalAvailableElement.appendChild(groEachesAvailableInput);
+
+    target.appendChild(totalAvailableElement);
+    target.appendChild(enterAvailableButton);
+}
+
+const saveAvailable = () => {
+    const pickupEaches = document.getElementById("opuEachesAvailableInput").value
+    const groceryEaches = document.getElementById("groEachesAvailableInput").value
+    localStorage.setItem('availablePickupEaches', pickupEaches)
+    localStorage.setItem('availableGroceryEaches', groceryEaches)
+    // populateTotalAvailable()
 }
 
 const createCartElement = (cartId) => {
